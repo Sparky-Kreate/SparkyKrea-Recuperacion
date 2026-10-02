@@ -1,593 +1,991 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Restablecer contraseña | SparkyKrea</title>
+    <meta charset="UTF-8">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>SparkyKrea — Restablecer contraseña</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    body {
-      min-height: 100vh;
-      background: #050505;
-      color: #f5f2eb;
-      font-family: "DM Sans", sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
+    <style>
 
-    .container {
-      width: 100%;
-      max-width: 460px;
-      text-align: center;
-    }
+        *{
+            box-sizing:border-box;
+            margin:0;
+            padding:0;
+        }
 
-    .logo {
-      width: 72px;
-      height: 72px;
-      border: 2px solid #8a6b2f;
-      border-radius: 50%;
-      margin: 0 auto 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #b99755;
-      font-size: 30px;
-      position: relative;
-    }
+        body{
+            min-height:100vh;
+            background:
+                radial-gradient(
+                    circle at top,
+                    #25201a 0%,
+                    #11100f 42%,
+                    #090909 100%
+                );
+            color:#f5f1e8;
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:20px;
+        }
 
-    .logo::before,
-    .logo::after {
-      content: "";
-      position: absolute;
-      width: 34px;
-      height: 2px;
-      background: #8a6b2f;
-      transform: rotate(45deg);
-    }
+        .container{
+            width:100%;
+            max-width:480px;
+        }
 
-    .logo::after {
-      transform: rotate(-45deg);
-    }
+        .card{
+            background:
+                rgba(25,23,20,.96);
+            border:1px solid rgba(212,175,55,.28);
+            border-radius:24px;
+            padding:34px 28px;
+            box-shadow:
+                0 20px 70px rgba(0,0,0,.55),
+                0 0 40px rgba(212,175,55,.05);
+        }
 
-    .logo span {
-      width: 12px;
-      height: 12px;
-      background: #b99755;
-      border-radius: 50%;
-      z-index: 2;
-    }
+        .logo{
+            text-align:center;
+            margin-bottom:30px;
+        }
 
-    .brand {
-      color: #b99755;
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: 1px;
-      margin-bottom: 28px;
-    }
+        .logo h1{
+            font-family:
+                Georgia,
+                "Times New Roman",
+                serif;
+            font-size:32px;
+            letter-spacing:1px;
+            color:#d4af37;
+        }
 
-    .card {
-      background: #101010;
-      border: 1px solid #292929;
-      border-radius: 24px;
-      padding: 34px 26px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.45);
-    }
+        .logo p{
+            margin-top:7px;
+            color:#aaa49a;
+            font-size:13px;
+        }
 
-    h1 {
-      font-family: "Playfair Display", serif;
-      font-size: 34px;
-      line-height: 1.15;
-      margin-bottom: 12px;
-    }
+        .icon{
+            width:72px;
+            height:72px;
+            margin:0 auto 22px;
+            border-radius:50%;
+            border:1px solid rgba(212,175,55,.45);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:#d4af37;
+            font-size:30px;
+            background:
+                rgba(212,175,55,.06);
+        }
 
-    .description {
-      color: #999;
-      font-size: 15px;
-      line-height: 1.6;
-      margin-bottom: 28px;
-    }
+        h2{
+            text-align:center;
+            font-family:
+                Georgia,
+                "Times New Roman",
+                serif;
+            font-size:28px;
+            margin-bottom:10px;
+        }
 
-    .field {
-      text-align: left;
-      margin-bottom: 18px;
-    }
+        .description{
+            text-align:center;
+            color:#aaa49a;
+            font-size:14px;
+            line-height:1.6;
+            margin-bottom:28px;
+        }
 
-    label {
-      display: block;
-      color: #ddd;
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
+        .form{
+            display:none;
+        }
 
-    input {
-      width: 100%;
-      height: 52px;
-      border: 1px solid #343434;
-      border-radius: 12px;
-      background: #080808;
-      color: #fff;
-      padding: 0 15px;
-      font-size: 16px;
-      outline: none;
-      transition: .2s;
-    }
+        .form.active{
+            display:block;
+        }
 
-    input:focus {
-      border-color: #9a7735;
-      box-shadow: 0 0 0 3px rgba(154,119,53,.12);
-    }
+        .field{
+            margin-bottom:18px;
+        }
 
-    button {
-      width: 100%;
-      height: 54px;
-      border: none;
-      border-radius: 14px;
-      background: #b08a43;
-      color: #090909;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      margin-top: 8px;
-      transition: .2s;
-    }
+        label{
+            display:block;
+            margin-bottom:8px;
+            font-size:13px;
+            color:#d9d3c8;
+        }
 
-    button:hover {
-      background: #c39a50;
-    }
+        input{
+            width:100%;
+            padding:14px 15px;
+            border-radius:12px;
+            border:1px solid #39352f;
+            background:#11100f;
+            color:#fff;
+            outline:none;
+            font-size:15px;
+            transition:.2s;
+        }
 
-    button:disabled {
-      opacity: .6;
-      cursor: not-allowed;
-    }
+        input:focus{
+            border-color:#d4af37;
+            box-shadow:
+                0 0 0 3px rgba(212,175,55,.09);
+        }
 
-    .back {
-      display: inline-block;
-      margin-top: 24px;
-      color: #b99755;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 600;
-    }
+        .button{
+            width:100%;
+            border:none;
+            border-radius:12px;
+            padding:15px;
+            background:#d4af37;
+            color:#111;
+            font-weight:bold;
+            font-size:15px;
+            cursor:pointer;
+            transition:.2s;
+            margin-top:6px;
+        }
 
-    .back:hover {
-      text-decoration: underline;
-    }
+        .button:hover{
+            background:#e2c15a;
+            transform:translateY(-1px);
+        }
 
-    .message {
-      display: none;
-      border-radius: 12px;
-      padding: 14px;
-      margin-top: 18px;
-      font-size: 14px;
-      line-height: 1.5;
-    }
+        .button:disabled{
+            opacity:.6;
+            cursor:not-allowed;
+            transform:none;
+        }
 
-    .error {
-      background: rgba(180, 50, 50, .12);
-      border: 1px solid rgba(200, 70, 70, .3);
-      color: #ffaaaa;
-    }
+        .message{
+            display:none;
+            margin-top:20px;
+            padding:14px;
+            border-radius:12px;
+            font-size:13px;
+            line-height:1.5;
+            text-align:center;
+        }
 
-    .success {
-      background: rgba(70, 150, 90, .12);
-      border: 1px solid rgba(90, 180, 110, .3);
-      color: #a9e6b4;
-    }
+        .message.show{
+            display:block;
+        }
 
-    .loading {
-      color: #aaa;
-      font-size: 14px;
-      margin-top: 16px;
-      display: none;
-    }
+        .message.error{
+            background:rgba(180,45,45,.12);
+            border:1px solid rgba(220,80,80,.3);
+            color:#ffb0b0;
+        }
 
-    .hidden {
-      display: none !important;
-    }
+        .message.success{
+            background:rgba(55,150,90,.12);
+            border:1px solid rgba(80,190,120,.3);
+            color:#a9efbf;
+        }
 
-    .success-box {
-      display: none;
-    }
+        .message.info{
+            background:rgba(212,175,55,.08);
+            border:1px solid rgba(212,175,55,.22);
+            color:#e5d69e;
+        }
 
-    .success-icon {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      border: 2px solid #8ebf97;
-      color: #a9e6b4;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 30px;
-      margin: 0 auto 20px;
-    }
+        .back{
+            display:block;
+            text-align:center;
+            margin-top:25px;
+            color:#d4af37;
+            text-decoration:none;
+            font-size:13px;
+        }
 
-    .success-box h2 {
-      font-family: "Playfair Display", serif;
-      font-size: 30px;
-      margin-bottom: 12px;
-    }
+        .back:hover{
+            text-decoration:underline;
+        }
 
-    .success-box p {
-      color: #999;
-      line-height: 1.6;
-      font-size: 15px;
-      margin-bottom: 24px;
-    }
+        .loading{
+            text-align:center;
+            padding:10px 0 5px;
+        }
 
-    .return-button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      height: 52px;
-      border-radius: 14px;
-      background: #b08a43;
-      color: #090909;
-      font-weight: 700;
-    }
+        .spinner{
+            width:34px;
+            height:34px;
+            border:3px solid rgba(212,175,55,.2);
+            border-top-color:#d4af37;
+            border-radius:50%;
+            animation:
+                spin .8s linear infinite;
+            margin:0 auto 16px;
+        }
 
-    @media (max-width: 480px) {
-      h1 {
-        font-size: 30px;
-      }
+        @keyframes spin{
+            to{
+                transform:rotate(360deg);
+            }
+        }
 
-      .card {
-        padding: 30px 20px;
-      }
-    }
-  </style>
+        .footer{
+            text-align:center;
+            color:#69655e;
+            font-size:11px;
+            margin-top:20px;
+        }
+
+        @media(max-width:480px){
+
+            body{
+                padding:14px;
+            }
+
+            .card{
+                padding:28px 20px;
+                border-radius:20px;
+            }
+
+            .logo h1{
+                font-size:28px;
+            }
+
+            h2{
+                font-size:24px;
+            }
+
+        }
+
+    </style>
+
 </head>
 
 <body>
 
-  <main class="container">
+    <div class="container">
 
-    <div class="logo">
-      <span></span>
-    </div>
+        <div class="card">
 
-    <div class="brand">SPARKYKREA</div>
+            <div class="logo">
 
-    <section class="card">
+                <h1>SparkyKrea</h1>
 
-      <div id="loadingScreen">
-        <h1>Restablecer contraseña</h1>
-        <p class="description">
-          Estamos preparando el cambio de contraseña...
-        </p>
+                <p>
+                    Recuperación de cuenta
+                </p>
 
-        <div class="loading" id="loadingText">
-          Verificando el enlace de recuperación...
-        </div>
-      </div>
+            </div>
 
-      <div id="resetBox" class="hidden">
 
-        <h1>Restablecer contraseña</h1>
+            <!-- ESTADO DE CARGA -->
 
-        <p class="description">
-          Crea una nueva contraseña para recuperar el acceso a tu cuenta.
-        </p>
-
-        <form id="resetForm">
-
-          <div class="field">
-            <label for="password">Nueva contraseña</label>
-            <input
-              type="password"
-              id="password"
-              placeholder="Escribe tu nueva contraseña"
-              minlength="6"
-              autocomplete="new-password"
-              required
+            <div
+                id="loadingSection"
+                class="loading"
             >
-          </div>
 
-          <div class="field">
-            <label for="confirmPassword">Confirmar contraseña</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              placeholder="Repite tu nueva contraseña"
-              minlength="6"
-              autocomplete="new-password"
-              required
+                <div class="icon">
+                    🔐
+                </div>
+
+                <h2>
+                    Restablecer contraseña
+                </h2>
+
+                <p class="description">
+                    Estamos verificando el enlace de recuperación...
+                </p>
+
+                <div class="spinner"></div>
+
+            </div>
+
+
+            <!-- FORMULARIO -->
+
+            <div
+                id="resetSection"
+                class="form"
             >
-          </div>
 
-          <button type="submit" id="saveButton">
-            Guardar nueva contraseña
-          </button>
+                <div class="icon">
+                    🔑
+                </div>
 
-          <div id="errorMessage" class="message error"></div>
+                <h2>
+                    Nueva contraseña
+                </h2>
 
-        </form>
-
-        <a
-          class="back"
-          href="https://sparky-kreate.github.io/SparkyKreate/"
-        >
-          ← Volver a SparkyKrea
-        </a>
-
-      </div>
-
-      <div id="successBox" class="success-box">
-
-        <div class="success-icon">✓</div>
-
-        <h2>¡Contraseña actualizada!</h2>
-
-        <p>
-          Tu nueva contraseña se guardó correctamente.
-          Ya puedes volver a SparkyKrea e iniciar sesión.
-        </p>
-
-        <a
-          class="return-button"
-          href="https://sparky-kreate.github.io/SparkyKreate/"
-        >
-          Volver a SparkyKrea
-        </a>
-
-      </div>
-
-    </section>
-
-  </main>
+                <p class="description">
+                    Escribe una nueva contraseña para tu cuenta de SparkyKrea.
+                </p>
 
 
-  <script>
-    const SUPABASE_URL =
-      "https://lvsntxkywjyxumlgtayl.supabase.co";
+                <div class="field">
 
-    const SUPABASE_KEY =
-      "sb_publishable_bhzMbxUHakbytVuVlNcz8A_f2f6szGA";
+                    <label for="newPassword">
+                        Nueva contraseña
+                    </label>
 
-    const supabaseClient =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY,
-        {
-          auth: {
-            detectSessionInUrl: true,
-            persistSession: true,
-            autoRefreshToken: true
-          }
-        }
-      );
+                    <input
+                        id="newPassword"
+                        type="password"
+                        placeholder="Escribe tu nueva contraseña"
+                        autocomplete="new-password"
+                    >
+
+                </div>
 
 
-    const loadingScreen =
-      document.getElementById("loadingScreen");
+                <div class="field">
 
-    const loadingText =
-      document.getElementById("loadingText");
+                    <label for="confirmPassword">
+                        Confirmar contraseña
+                    </label>
 
-    const resetBox =
-      document.getElementById("resetBox");
+                    <input
+                        id="confirmPassword"
+                        type="password"
+                        placeholder="Repite tu nueva contraseña"
+                        autocomplete="new-password"
+                    >
 
-    const successBox =
-      document.getElementById("successBox");
-
-    const resetForm =
-      document.getElementById("resetForm");
-
-    const passwordInput =
-      document.getElementById("password");
-
-    const confirmPasswordInput =
-      document.getElementById("confirmPassword");
-
-    const saveButton =
-      document.getElementById("saveButton");
-
-    const errorMessage =
-      document.getElementById("errorMessage");
+                </div>
 
 
-    function showResetForm() {
-      loadingScreen.classList.add("hidden");
-      resetBox.classList.remove("hidden");
-    }
+                <button
+                    id="saveButton"
+                    class="button"
+                    type="button"
+                    onclick="updatePassword()"
+                >
+                    Guardar nueva contraseña
+                </button>
 
 
-    function showError(message) {
-      errorMessage.textContent = message;
-      errorMessage.style.display = "block";
-    }
+                <div
+                    id="message"
+                    class="message"
+                ></div>
+
+            </div>
 
 
-    function hideError() {
-      errorMessage.textContent = "";
-      errorMessage.style.display = "none";
-    }
-
-
-    async function verifyRecoverySession() {
-
-      loadingText.style.display = "block";
-
-      const {
-        data: {
-          session
-        }
-      } = await supabaseClient.auth.getSession();
-
-      if (session) {
-        showResetForm();
-        return;
-      }
-
-      /*
-        Esperamos a que Supabase procese
-        automáticamente el enlace de recuperación.
-      */
-
-      setTimeout(async () => {
-
-        const {
-          data: {
-            session: currentSession
-          }
-        } = await supabaseClient.auth.getSession();
-
-        if (currentSession) {
-          showResetForm();
-        } else {
-          loadingScreen.innerHTML = `
-            <h1>Enlace no válido</h1>
-            <p class="description">
-              Este enlace de recuperación no es válido,
-              ha expirado o ya fue utilizado.
-            </p>
+            <!-- ENLACE PARA VOLVER -->
 
             <a
-              class="return-button"
-              href="https://sparky-kreate.github.io/SparkyKreate/"
+                class="back"
+                href="https://sparky-kreate.github.io/SparkyKreate/"
             >
-              Volver a SparkyKrea
+                ← Volver a SparkyKrea
             </a>
-          `;
-        }
 
-      }, 1200);
+        </div>
+
+
+        <div class="footer">
+            © SparkyKrea
+        </div>
+
+    </div>
+
+
+<script>
+
+    /*
+    ==========================================
+    CONFIGURACIÓN SUPABASE
+    ==========================================
+    */
+
+    const SUPABASE_URL =
+        "https://lvsntxkywjyxumlgtayl.supabase.co";
+
+    const SUPABASE_KEY =
+        "sb_publishable_bhzMbxUHakbytVuVlNcz8A_f2f6szGA";
+
+
+    /*
+    ==========================================
+    CREAR CLIENTE SUPABASE
+    ==========================================
+    */
+
+    const supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY,
+            {
+                auth:{
+                    detectSessionInUrl:true,
+                    persistSession:true,
+                    autoRefreshToken:true
+                }
+            }
+        );
+
+
+    /*
+    ==========================================
+    ELEMENTOS
+    ==========================================
+    */
+
+    const loadingSection =
+        document.getElementById(
+            "loadingSection"
+        );
+
+    const resetSection =
+        document.getElementById(
+            "resetSection"
+        );
+
+    const messageBox =
+        document.getElementById(
+            "message"
+        );
+
+    const saveButton =
+        document.getElementById(
+            "saveButton"
+        );
+
+
+    /*
+    ==========================================
+    MOSTRAR MENSAJE
+    ==========================================
+    */
+
+    function showMessage(
+        text,
+        type
+    ){
+
+        messageBox.textContent =
+            text;
+
+        messageBox.className =
+            "message show " + type;
+
     }
 
 
-    supabaseClient.auth.onAuthStateChange(
-      async (event, session) => {
+    /*
+    ==========================================
+    MOSTRAR FORMULARIO
+    ==========================================
+    */
 
-        if (event === "PASSWORD_RECOVERY" && session) {
-          showResetForm();
-        }
+    function showResetForm(){
 
-      }
-    );
+        loadingSection.style.display =
+            "none";
+
+        resetSection.classList.add(
+            "active"
+        );
+
+    }
 
 
-    resetForm.addEventListener(
-      "submit",
-      async (event) => {
+    /*
+    ==========================================
+    MOSTRAR ERROR DE ENLACE
+    ==========================================
+    */
 
-        event.preventDefault();
+    function showInvalidLink(){
 
-        hideError();
+        loadingSection.style.display =
+            "none";
+
+        resetSection.classList.add(
+            "active"
+        );
+
+        document.querySelector(
+            "#resetSection h2"
+        ).textContent =
+            "Enlace no válido";
+
+        document.querySelector(
+            "#resetSection .description"
+        ).textContent =
+            "El enlace de recuperación ha caducado o ya fue utilizado.";
+
+        document.getElementById(
+            "newPassword"
+        ).style.display =
+            "none";
+
+        document.getElementById(
+            "confirmPassword"
+        ).style.display =
+            "none";
+
+        document.querySelector(
+            "#resetSection label[for='newPassword']"
+        ).style.display =
+            "none";
+
+        document.querySelector(
+            "#resetSection label[for='confirmPassword']"
+        ).style.display =
+            "none";
+
+        saveButton.style.display =
+            "none";
+
+        showMessage(
+            "Solicita un nuevo enlace de recuperación desde la página principal de SparkyKrea.",
+            "error"
+        );
+
+    }
+
+
+    /*
+    ==========================================
+    ACTUALIZAR CONTRASEÑA
+    ==========================================
+    */
+
+    async function updatePassword(){
 
         const password =
-          passwordInput.value.trim();
+            document
+            .getElementById(
+                "newPassword"
+            )
+            .value;
 
         const confirmPassword =
-          confirmPasswordInput.value.trim();
+            document
+            .getElementById(
+                "confirmPassword"
+            )
+            .value;
 
 
-        if (password.length < 6) {
+        /*
+        VALIDAR CONTRASEÑA
+        */
 
-          showError(
-            "La contraseña debe tener al menos 6 caracteres."
-          );
+        if(!password){
 
-          return;
-        }
-
-
-        if (password !== confirmPassword) {
-
-          showError(
-            "Las contraseñas no coinciden."
-          );
-
-          return;
-        }
-
-
-        saveButton.disabled = true;
-        saveButton.textContent =
-          "Guardando...";
-
-
-        try {
-
-          const {
-            data: {
-              session
-            }
-          } = await supabaseClient.auth.getSession();
-
-
-          if (!session) {
-
-            showError(
-              "La sesión de recuperación ha expirado. Solicita un nuevo enlace."
+            showMessage(
+                "Escribe una nueva contraseña.",
+                "error"
             );
 
-            saveButton.disabled = false;
-            saveButton.textContent =
-              "Guardar nueva contraseña";
+            return;
+        }
+
+
+        /*
+        VALIDAR LONGITUD
+        */
+
+        if(password.length < 6){
+
+            showMessage(
+                "La contraseña debe tener al menos 6 caracteres.",
+                "error"
+            );
 
             return;
-          }
+        }
 
 
-          const {
-            error
-          } =
-            await supabaseClient.auth.updateUser({
-              password: password
+        /*
+        CONFIRMAR CONTRASEÑA
+        */
+
+        if(password !== confirmPassword){
+
+            showMessage(
+                "Las contraseñas no coinciden.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        /*
+        DESACTIVAR BOTÓN
+        */
+
+        saveButton.disabled =
+            true;
+
+        saveButton.textContent =
+            "Guardando...";
+
+
+        try{
+
+            /*
+            COMPROBAR SESIÓN
+            */
+
+            const {
+                data: sessionData,
+                error: sessionError
+            } =
+            await supabaseClient
+            .auth
+            .getSession();
+
+
+            if(sessionError){
+
+                throw sessionError;
+
+            }
+
+
+            if(
+                !sessionData ||
+                !sessionData.session
+            ){
+
+                showMessage(
+                    "No encontramos una sesión de recuperación. Abre nuevamente el enlace que recibiste por correo.",
+                    "error"
+                );
+
+                saveButton.disabled =
+                    false;
+
+                saveButton.textContent =
+                    "Guardar nueva contraseña";
+
+                return;
+            }
+
+
+            /*
+            ACTUALIZAR CONTRASEÑA
+            */
+
+            const {
+                data,
+                error
+            } =
+            await supabaseClient
+            .auth
+            .updateUser({
+                password:password
             });
 
 
-          if (error) {
-            throw error;
-          }
+            if(error){
+
+                throw error;
+
+            }
 
 
-          resetBox.classList.add("hidden");
-          successBox.style.display = "block";
+            /*
+            ÉXITO
+            */
+
+            showMessage(
+                "¡Contraseña actualizada correctamente! Ya puedes volver a SparkyKrea e iniciar sesión.",
+                "success"
+            );
 
 
-          passwordInput.value = "";
-          confirmPasswordInput.value = "";
+            saveButton.textContent =
+                "Contraseña actualizada";
 
 
-        } catch (error) {
+            /*
+            LIMPIAR CAMPOS
+            */
 
-          console.error(error);
+            document.getElementById(
+                "newPassword"
+            ).value = "";
 
-          showError(
-            error.message ||
-            "No se pudo actualizar la contraseña."
-          );
+            document.getElementById(
+                "confirmPassword"
+            ).value = "";
 
-          saveButton.disabled = false;
-          saveButton.textContent =
-            "Guardar nueva contraseña";
+
+        }catch(error){
+
+            console.error(
+                "Error actualizando contraseña:",
+                error
+            );
+
+
+            let errorMessage =
+                "No pudimos actualizar la contraseña.";
+
+
+            if(error && error.message){
+
+                errorMessage =
+                    error.message;
+
+            }
+
+
+            showMessage(
+                errorMessage,
+                "error"
+            );
+
+
+            saveButton.disabled =
+                false;
+
+            saveButton.textContent =
+                "Guardar nueva contraseña";
+
         }
 
-      }
+    }
+
+
+    /*
+    ==========================================
+    EVENTO DE AUTENTICACIÓN
+    ==========================================
+    */
+
+    supabaseClient
+    .auth
+    .onAuthStateChange(
+        async (
+            event,
+            session
+        ) => {
+
+            console.log(
+                "Supabase Auth:",
+                event
+            );
+
+
+            /*
+            CUANDO SUPABASE CONFIRMA
+            QUE ES UNA RECUPERACIÓN
+            */
+
+            if(
+                event ===
+                "PASSWORD_RECOVERY"
+            ){
+
+                showResetForm();
+
+                return;
+
+            }
+
+
+            /*
+            SI YA EXISTE UNA SESIÓN
+            */
+
+            if(
+                session &&
+                session.user
+            ){
+
+                showResetForm();
+
+            }
+
+        }
     );
 
 
-    verifyRecoverySession();
+    /*
+    ==========================================
+    COMPROBACIÓN INICIAL
+    ==========================================
+    */
 
-  </script>
+    async function checkRecoverySession(){
+
+        try{
+
+            /*
+            DAR TIEMPO A SUPABASE
+            PARA PROCESAR EL ENLACE
+            */
+
+            await new Promise(
+                resolve =>
+                    setTimeout(
+                        resolve,
+                        1500
+                    )
+            );
+
+
+            const {
+                data,
+                error
+            } =
+            await supabaseClient
+            .auth
+            .getSession();
+
+
+            if(error){
+
+                console.error(
+                    error
+                );
+
+                showInvalidLink();
+
+                return;
+
+            }
+
+
+            /*
+            SI HAY SESIÓN,
+            MOSTRAR FORMULARIO
+            */
+
+            if(
+                data &&
+                data.session &&
+                data.session.user
+            ){
+
+                showResetForm();
+
+                return;
+
+            }
+
+
+            /*
+            SI NO HAY SESIÓN,
+            REVISAR SI LA URL
+            TIENE DATOS DE RECUPERACIÓN
+            */
+
+            const url =
+                window.location.href;
+
+
+            const hasCode =
+                url.includes(
+                    "?code="
+                );
+
+
+            const hasAccessToken =
+                url.includes(
+                    "access_token="
+                );
+
+
+            const hasTypeRecovery =
+                url.includes(
+                    "type=recovery"
+                );
+
+
+            /*
+            SI TIENE PARÁMETROS
+            DE RECUPERACIÓN,
+            ESPERAR UN POCO MÁS
+            */
+
+            if(
+                hasCode ||
+                hasAccessToken ||
+                hasTypeRecovery
+            ){
+
+                await new Promise(
+                    resolve =>
+                        setTimeout(
+                            resolve,
+                            2000
+                        )
+                );
+
+
+                const {
+                    data: retryData
+                } =
+                await supabaseClient
+                .auth
+                .getSession();
+
+
+                if(
+                    retryData &&
+                    retryData.session
+                ){
+
+                    showResetForm();
+
+                    return;
+
+                }
+
+            }
+
+
+            /*
+            NO SE ENCONTRÓ SESIÓN
+            */
+
+            showInvalidLink();
+
+
+        }catch(error){
+
+            console.error(
+                "Error comprobando recuperación:",
+                error
+            );
+
+            showInvalidLink();
+
+        }
+
+    }
+
+
+    /*
+    ==========================================
+    INICIAR
+    ==========================================
+    */
+
+    checkRecoverySession();
+
+</script>
 
 </body>
-        </html>
+
+</html>
